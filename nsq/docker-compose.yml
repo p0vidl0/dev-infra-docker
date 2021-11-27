@@ -1,0 +1,63 @@
+version: '3.7'
+services:
+  nsqlookupd:
+    image: nsqio/nsq
+    command: /nsqlookupd
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    networks:
+      internal-bridge:
+        aliases:
+          - nsqlookupd
+
+  nsqd:
+    image: nsqio/nsq
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160 --data-path=/data
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    networks:
+      internal-bridge:
+        aliases:
+          - nsqd
+    volumes:
+      - type: volume
+        source: nsq-data
+        target: /data
+
+  nsqadmin:
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    networks:
+      internal-bridge:
+        aliases:
+          - nsqadmin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nsqadmin.rule=Host(`$NSQ_ADMIN_DOMAIN`)"
+      - "traefik.http.routers.nsqadmin.entrypoints=web"
+      - "traefik.http.routers.nsqadmin.service=nsqadmin"
+      - "traefik.http.services.nsqadmin.loadbalancer.server.port=4171"
+
+volumes:
+  nsq-data:
+
+networks:
+  internal-bridge:
+    name: internal-bridge

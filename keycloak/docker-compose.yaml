@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  keycloak:
+    image: docker.io/bitnami/keycloak:15
+    restart: always
+    env_file:
+      - keycloak.env
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+    networks:
+      internal-bridge:
+        aliases:
+          - keycloak
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.keycloak.rule=Host(`$KEYCLOAK_DOMAIN`)'
+      - 'traefik.http.routers.keycloak.entrypoints=web'
+      - 'traefik.http.routers.keycloak.service=keycloak'
+      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
+
+networks:
+  internal-bridge:
+    name: internal-bridge

@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - mysql.env
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+    networks:
+      internal-bridge:
+        aliases:
+          - mysql
+    volumes:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+    ports:
+      - ${MYSQL_PORT}:3306
+
+volumes:
+  mysql-data:
+
+networks:
+  internal-bridge:
+    name: internal-bridge

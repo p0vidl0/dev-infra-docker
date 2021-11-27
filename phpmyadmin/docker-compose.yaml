@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  phpmyadmin:
+    image: phpmyadmin
+    env_file:
+      - phpmyadmin.env
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+    networks:
+      internal-bridge:
+        aliases:
+          - phpmyadmin
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.pma.rule=Host(`$PHPMYADMIN_DOMAIN`)'
+      - 'traefik.http.routers.pma.entrypoints=web'
+    restart: always
+    volumes:
+      - /sessions
+
+networks:
+  internal-bridge:
+    name: internal-bridge
+

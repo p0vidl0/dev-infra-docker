@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    env_file:
+      - rabbitmq.env
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+    networks:
+      internal-bridge:
+        aliases:
+          - rabbitmq
+    volumes:
+      - type: volume
+        source: rabbitmq-data
+        target: /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.rabbitmq-management.rule=Host(`$RABBITMQ_MANAGEMENT_DOMAIN`)'
+      - 'traefik.http.routers.rabbitmq-management.entrypoints=web'
+      - 'traefik.http.routers.rabbitmq-management.service=rabbitmq-management'
+      - 'traefik.http.services.rabbitmq-management.loadbalancer.server.port=15672'
+
+volumes:
+  rabbitmq-data:
+
+networks:
+  internal-bridge:
+    name: internal-bridge
