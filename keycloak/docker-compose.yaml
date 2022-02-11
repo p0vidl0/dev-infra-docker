@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   keycloak:
-    image: docker.io/bitnami/keycloak:15
+    image: docker.io/bitnami/keycloak:${KEYCLOAK_VERSION}
     restart: always
     env_file:
       - keycloak.env
