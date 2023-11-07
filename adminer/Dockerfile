@@ -1,10 +1,8 @@
-FROM adminer:4
+ARG VERSION=4.8.1
+FROM adminer:${VERSION}
 
 USER root
 
-RUN apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS curl-dev openssl-dev \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb \
-    && apk del --no-network .phpize-deps-configure
+RUN apt update && apt install -y php7.4-mongodb
 
 USER adminer

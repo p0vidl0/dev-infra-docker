@@ -1,19 +1,16 @@
-version: '3.7'
-
 services:
   redis:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
     image: redis:6-alpine
     restart: always
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '50m'
     networks:
       internal-bridge:
         aliases:
           - redis
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT:-6379}:6379'
 
 networks:
   internal-bridge:

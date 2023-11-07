@@ -1,0 +1,35 @@
+services:
+  rabbitmq:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-example}
+    networks:
+      internal-bridge:
+        aliases:
+          - rabbitmq
+    volumes:
+      - type: volume
+        source: rabbitmq-data
+        target: /var/lib/rabbitmq
+    ports:
+      - '${RABBITMQ_PORT:-5672}:5672'
+    expose:
+      - 5672
+      - 15672
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.rabbitmq-management.rule=Host(`${RABBITMQ_MANAGEMENT_DOMAIN:-rabbitmq.indocker.app}`)'
+      - 'traefik.http.routers.rabbitmq-management.entrypoints=https'
+      - 'traefik.http.services.rabbitmq-management.loadbalancer.server.port=15672'
+
+volumes:
+  rabbitmq-data:
+
+networks:
+  internal-bridge:
+    name: internal-bridge

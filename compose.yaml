@@ -1,0 +1,130 @@
+services:
+  adminer:
+    extends:
+      file: ./adminer/compose.yaml
+      service: adminer
+    networks:
+      local:
+        aliases:
+          - adminer
+    profiles:
+      - adminer
+      - all
+
+  dozzle:
+    extends:
+      file: ./dozzle/compose.yaml
+      service: dozzle
+    profiles:
+      - dozzle
+      - all
+
+  mongo:
+    extends:
+      file: ./mongo/compose.yaml
+      service: mongo
+    networks:
+      local:
+        aliases:
+          - mongo
+    profiles:
+      - mongo
+      - all
+
+  postgres:
+    extends:
+      file: ./postgres/compose.yaml
+      service: postgres
+    networks:
+      local:
+        aliases:
+          - postgres
+    profiles:
+      - postgres
+      - all
+
+  rabbitmq:
+    extends:
+      file: ./rabbitmq/compose.yaml
+      service: rabbitmq
+    networks:
+      local:
+        aliases:
+          - rabbitmq
+    profiles:
+      - rabbitmq
+      - all
+
+  redis:
+    extends:
+      file: ./redis/compose.yaml
+      service: redis
+    networks:
+      local:
+        aliases:
+          - redis
+    profiles:
+      - redis
+      - all
+
+  indocker.app:
+    extends:
+      file: ./indocker.app/compose.yaml
+      service: indocker.app
+    networks:
+      local: {}
+      internal-bridge: {}
+    profiles:
+      - indocker.app
+      - all
+
+  grafana.loki:
+    extends:
+      file: ./grafana/compose.yaml
+      service: loki
+    profiles:
+      - grafana
+      - all
+
+  grafana.grafana:
+    extends:
+      file: ./grafana/compose.yaml
+      service: grafana
+    profiles:
+      - grafana
+      - all
+
+  grafana.node-exporter:
+    extends:
+      file: ./grafana/compose.yaml
+      service: node-exporter
+    profiles:
+      - grafana
+      - all
+
+  grafana.prometheus:
+    extends:
+      file: ./grafana/compose.yaml
+      service: prometheus
+    profiles:
+      - grafana
+      - all
+
+networks:
+  internal-bridge:
+    name: internal-bridge
+    driver: bridge
+  monitoring:
+    name: monitoring
+    driver: bridge
+  local:
+    name: ${LOCAL_NETWORK_NAME:-local}
+    external: true
+
+volumes:
+  mongo-data:
+  postgres-data:
+  rabbitmq-data:
+  prometheus_data:
+  grafana-storage:
+  loki-storage:

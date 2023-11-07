@@ -1,0 +1,27 @@
+services:
+  postgres:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: postgres:${POSTGRES_VERSION:-14}
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-example}
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+    networks:
+      local: {}
+
+volumes:
+  postgres-data:
+
+networks:
+  internal-bridge:
+    name: local-bridge
+  local:
+    name: pv
+    driver: bridge
+    external: true

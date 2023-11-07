@@ -2,32 +2,25 @@ version: '3.7'
 
 services:
   traefik:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
     image: 'traefik:v2.5'
-    container_name: 'traefik'
-    restart: always
     command:
       - '--api.dashboard=true'
       - '--log.level=DEBUG'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
-      - '--entryPoints.web.address=:80'
+      - '--entryPoints.http.address=:80'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.dashboard.entrypoints=web'
-      - 'traefik.http.routers.dashboard.rule=Host(`$TRAEFIK_DOMAIN`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
+      - 'traefik.http.routers.dashboard.entrypoints=http'
+      - 'traefik.http.routers.dashboard.rule=Host(`$${TRAEFIK_DOMAIN:traefik.indocker.app}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
       - 'traefik.http.routers.dashboard.service=api@internal'
     ports:
       - '80:80'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '50m'
-    networks:
-      internal-bridge:
-        aliases:
-          - traefik
 
 networks:
   internal-bridge:

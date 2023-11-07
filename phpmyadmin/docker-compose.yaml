@@ -16,7 +16,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.pma.rule=Host(`$PHPMYADMIN_DOMAIN`)'
-      - 'traefik.http.routers.pma.entrypoints=web'
+      - 'traefik.http.routers.pma.entrypoints=http'
     restart: always
     volumes:
       - /sessions

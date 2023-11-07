@@ -1,0 +1,44 @@
+services:
+  mongo:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: mongo:4
+    ports:
+      - ${MONGO_PORT:-27017}:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
+    volumes:
+      - type: volume
+        source: mongo-data
+        target: /data/db
+    networks:
+      internal-bridge:
+        aliases:
+          - mongo
+
+  mongo-express:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: mongo-express:latest
+    environment:
+      ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL:-"mongodb://root:example@mongo:27017/"}
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: ${ME_CONFIG_MONGODB_ENABLE_ADMIN:-false}
+    networks:
+      internal-bridge:
+        aliases:
+          - mongo-express
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.me.rule=Host(`${MONGO_EXPRESS_DOMAIN:-mongo-express.indocker.app}`)'
+      - 'traefik.http.routers.me.entrypoints=https'
+
+volumes:
+  mongo-data:
+
+networks:
+  internal-bridge:
+    name: internal-bridge
+

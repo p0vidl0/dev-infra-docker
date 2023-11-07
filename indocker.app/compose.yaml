@@ -1,0 +1,22 @@
+services:
+  indocker.app:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: 'quay.io/indocker/app:1'
+    command:
+      - '--api.dashboard=true'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dashboard.entrypoints=https'
+      - 'traefik.http.routers.dashboard.rule=Host(`traefik.indocker.app`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
+      - 'traefik.http.routers.dashboard.service=api@internal'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+
+networks:
+  internal-bridge:
+    name: internal-bridge

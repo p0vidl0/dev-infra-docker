@@ -17,7 +17,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.keycloak.rule=Host(`$KEYCLOAK_DOMAIN`)'
-      - 'traefik.http.routers.keycloak.entrypoints=web'
+      - 'traefik.http.routers.keycloak.entrypoints=http'
       - 'traefik.http.routers.keycloak.service=keycloak'
       - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
 

@@ -1,0 +1,13 @@
+services:
+  dozzle:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dozzle.rule=Host(`${DOZZLE_DOMAIN:-dozzle.indocker.app}`)'
+      - 'traefik.http.routers.dozzle.entrypoints=https'
+
