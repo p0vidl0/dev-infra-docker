@@ -1,0 +1,26 @@
+services:
+  smtp:
+    extends:
+      file: ../base/compose.yaml
+      service: base-service
+    image: gessnerfl/fake-smtp-server:2.1.3
+    restart: always
+    environment:
+      - FAKESMTP_AUTHENTICATION_USERNAME=mailer
+      - FAKESMTP_AUTHENTICATION_PASSWORD=password
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mail.rule=Host(`${MAIL_DOMAIN:-mail.indocker.app}`)'
+      - 'traefik.http.routers.mail.entrypoints=https'
+      - 'traefik.http.routers.mail.service=mail'
+      - 'traefik.http.services.mail.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.mail-api.rule=Host(`${MAIL_API_DOMAIN:-mail-api.indocker.app}`)'
+      - 'traefik.http.routers.mail-api.entrypoints=https'
+      - 'traefik.http.routers.mail-api.service=mail-api'
+      - 'traefik.http.services.mail-api.loadbalancer.server.port=8081'
+      - 'traefik.tcp.routers.smtp.rule=HostSNI(`${SMTP_DOMAIN:-smtp.indocker.app}`)'
+      - 'traefik.tcp.routers.smtp.entrypoints=smtp'
+      - 'traefik.tcp.routers.smtp.tls=true'
+      - 'traefik.tcp.routers.smtp.service=smtp'
+      - 'traefik.tcp.services.smtp.loadbalancer.server.port=8025'
+

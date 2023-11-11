@@ -12,8 +12,6 @@ services:
       - type: volume
         source: postgres-data
         target: /var/lib/postgresql/data
-    networks:
-      local: {}
 
 volumes:
   postgres-data:

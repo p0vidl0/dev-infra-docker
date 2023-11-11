@@ -3,10 +3,6 @@ services:
     extends:
       file: ./adminer/compose.yaml
       service: adminer
-    networks:
-      local:
-        aliases:
-          - adminer
     profiles:
       - adminer
       - all
@@ -23,10 +19,6 @@ services:
     extends:
       file: ./mongo/compose.yaml
       service: mongo
-    networks:
-      local:
-        aliases:
-          - mongo
     profiles:
       - mongo
       - all
@@ -35,10 +27,6 @@ services:
     extends:
       file: ./postgres/compose.yaml
       service: postgres
-    networks:
-      local:
-        aliases:
-          - postgres
     profiles:
       - postgres
       - all
@@ -47,10 +35,6 @@ services:
     extends:
       file: ./rabbitmq/compose.yaml
       service: rabbitmq
-    networks:
-      local:
-        aliases:
-          - rabbitmq
     profiles:
       - rabbitmq
       - all
@@ -59,10 +43,6 @@ services:
     extends:
       file: ./redis/compose.yaml
       service: redis
-    networks:
-      local:
-        aliases:
-          - redis
     profiles:
       - redis
       - all
@@ -72,8 +52,7 @@ services:
       file: ./indocker.app/compose.yaml
       service: indocker.app
     networks:
-      local: {}
-      internal-bridge: {}
+      - internal-bridge
     profiles:
       - indocker.app
       - all
@@ -110,6 +89,14 @@ services:
       - grafana
       - all
 
+  smtp:
+    extends:
+      file: ./fake-smtp-server/compose.yaml
+      service: smtp
+    profiles:
+      - smtp
+      - all
+
 networks:
   internal-bridge:
     name: internal-bridge
@@ -117,9 +104,6 @@ networks:
   monitoring:
     name: monitoring
     driver: bridge
-  local:
-    name: ${LOCAL_NETWORK_NAME:-local}
-    external: true
 
 volumes:
   mongo-data:
